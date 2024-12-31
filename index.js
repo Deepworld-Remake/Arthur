@@ -40,39 +40,24 @@ function refreshPresence() {
         activities: [{
             name: 'v' + global.version,
             type: ActivityType.Streaming,
-            url: 'https://www.twitch.tv/mistersircode'
+            url: 'https://www.twitch.tv/ '
         }],
         status: 'online'
     });
 }
 
-function dmOwner(message) {
-    global.bot.users.fetch(global.botOwner, false).then((user) => {
-        user.send(message);
-    });
-}
-
-function dayTimer(daysCompleted) {
-    if (daysCompleted >= 25) {
-        dmOwner('Reminder to ping me today!');
-        dayTimer(0)
-    } else {
-        setTimeout(() => {
-            dayTimer(daysCompleted + 1);
-        }, 86400000); // 24 Hours
-    }
-}
-
 global.bot.once('ready', () => {
     console.log('\n\n');
-    console.log(colors.bold('    █ ▄▀ █  █ █▀▄▀█ █▀▀█').magenta);
-    console.log(colors.bold('    █▀▄  █  █ █ █ █ █▄▄█').magenta);
-    console.log(colors.bold('    █  █ ▀▄▄▀ █   █ █  █').magenta);
+    console.log(colors.bold('    ░▒▓██████▓▒░░▒▓███████▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓████████▓▒░▒▓███████▓▒░  ░▒▓█▓▒░   ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░').magenta);
     console.log(colors.bold(`    v${global.version}\n\n`).magenta);
     console.log(colors.bold(' + ').green + `Logged in as `.cyan + colors.bold(global.bot.user.tag).red + '\n');
     refreshPresence();
-    setInterval(refreshPresence, 60000);
-    dayTimer(0);
 });
 
 global.bot.on('interactionCreate', async interaction => {
@@ -93,7 +78,7 @@ global.bot.on('messageCreate', message => {
     if (message.author.id == config.bot.owner) {
         let botname = bot.user.username.toLowerCase();
         try {
-            if (txt.startsWith('keval')) {
+            if (txt.startsWith(botname + '.eval')) {
                 const content = txt.split(' ');
                 try {
                     content.shift();
@@ -103,7 +88,7 @@ global.bot.on('messageCreate', message => {
                 } catch(e) {
                     message.reply('Eval failed with error: ' + e);
                 }
-            } else if (txt.startsWith(botname + ' end')) {
+            } else if (txt.startsWith(botname + '.end')) {
                 console.log('Shutting Down...'.red);
                 message.reply('Emergency Shutdown Started').then(process.exit);
             } else if (txt.startsWith(botname + ' restart')) {
@@ -116,7 +101,7 @@ global.bot.on('messageCreate', message => {
                 });
                 console.log('Restarting...'.red);
                 message.reply('Emergency Restart Started').then(process.exit);
-            } else if (txt.startsWith(botname + ' host')) {
+            } else if (txt.startsWith(botname + '.host')) {
                 const logEmbed = new EmbedBuilder()
                     .addFields({
                         name: 'Platform',
@@ -129,21 +114,21 @@ global.bot.on('messageCreate', message => {
                         value: `${os.cpus()[0].model}`
                     });
                 message.reply({ embeds: [logEmbed] });
-            } else if (txt.startsWith(botname + ' reload')) {
+            } else if (txt.startsWith(botname + '.reload')) {
                 message.reply(`Reloading REST commands...`);
                 rest.put(Routes.applicationCommands(global.bot.user.id), { body: global.globals }).then((e) => {
                     rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: global.locals }).then(() => {
                         message.channel.send((global.commands.length) + ' slash commands Updated');
                     });
                 });
-            } else if (txt.startsWith(botname + ' reset')) {
+            } else if (txt.startsWith(botname + '.reset')) {
                 message.reply(`Deleting REST commands...`);
                 rest.put(Routes.applicationCommands(global.bot.user.id), { body: [] }).then(() => {
                     rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: [] }).then(() => {
                         message.channel.send((global.commands.length) + ' slash commands Deleted');
                     });
                 });
-            } else if (txt.startsWith(botname + ' load')) { // Unfinished
+            } else if (txt.startsWith(botname + '.load')) { // Unfinished
                 message.reply(`Attempting to reload command...`);
                 const cmdName = txt.split(' ')[1];
                 if(message.client.commands.get(cmdName)){
