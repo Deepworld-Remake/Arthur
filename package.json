@@ -1,6 +1,6 @@
 {
-  "name": "kuma-bot",
-  "version": "5.2.0",
+  "name": "arthur-bot",
+  "version": "0.0.1",
   "description": "Discord Bot",
   "main": "./index.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "discord-api-types": "^0.22.0",
     "discord.js": "^14.2.0",
     "dotenv": "^16.0.1",
-    "inquirer": "^8.0.0"
+    "inquirer": "^8.0.0",
+    "xhr2": "^0.2.1"
   }
 }

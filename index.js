@@ -5,14 +5,11 @@ const pkg = require('./package.json');
 const colors = require('colors');
 const os = require('os');
 const path = require('path');
-const { isArray } = require('util');
-const commandFiles = 'ban guild help kick mute ping purge rules speak user'.split(' ');
+const commandFiles = 'guild help ping speak user world'.split(' ');
 let envconfpath = path.join(__dirname, './.env');
 require('dotenv').config({ path: envconfpath });
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
-
-process.on('uncaughtException', function (err) { console.warn(err); });
 
 global.bot = new Client({ intents: [
     GatewayIntentBits.Guilds, 
@@ -31,7 +28,7 @@ for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     global.bot.commands.set(command.data.name, command);
     if (command.local) global.locals.push(command.data.toJSON());
-    else  global.globals.push(command.data.toJSON());
+    else global.globals.push(command.data.toJSON());
     global.commands.push(command.data.toJSON())
 }
 
@@ -48,13 +45,13 @@ function refreshPresence() {
 
 global.bot.once('ready', () => {
     console.log('\n\n');
-    console.log(colors.bold('    ░▒▓██████▓▒░░▒▓███████▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓████████▓▒░▒▓███████▓▒░  ░▒▓█▓▒░   ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('     ░▒▓██████▓▒░░▒▓███████▓▒░▒▓███████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓████████▓▒░▒▓███████▓▒░  ░▒▓█▓▒░  ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░').magenta);
     console.log(colors.bold(`    v${global.version}\n\n`).magenta);
     console.log(colors.bold(' + ').green + `Logged in as `.cyan + colors.bold(global.bot.user.tag).red + '\n');
     refreshPresence();
