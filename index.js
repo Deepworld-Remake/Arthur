@@ -4,8 +4,10 @@ const config = require('./config.json');
 const pkg = require('./package.json');
 const colors = require('colors');
 const os = require('os');
+const fs = require('fs');
 const path = require('path');
 const commandFiles = 'guild help ping speak user world online'.split(' ');
+let active = require('./active.json');
 let envconfpath = path.join(__dirname, './.env');
 require('dotenv').config({ path: envconfpath });
 
@@ -43,8 +45,15 @@ function refreshPresence() {
     });
 }
 
+function testDate(t, n) {
+    if (n - t < (1000 * 60)) return true;
+    else return false;
+}
+
 function testForNewWorld() {
+    
     //http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&sort=created
+
 }
 
 global.bot.once('ready', () => {

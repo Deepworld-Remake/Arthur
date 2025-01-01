@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, InviteTargetType, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 const commandBuilder = new SlashCommandBuilder()
     .setName('speak')
