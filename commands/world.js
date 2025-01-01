@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, inlineCode } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 let XMLHttpRequest = require('xhr2');
 
 let biomes = {
@@ -36,21 +36,32 @@ function searchWorlds(page, info, callback) {
             let needsToEnd = false;
             let raw = JSON.parse(json);
             if (raw.length == 0) needsToEnd = true;
-            let distances = info[0] || [];
+            let distance = info[1] || 0;
+            let best = info[2] || {};
             for (let i = 0; i < raw.length; i++) {
                 if (!needsToEnd) {
                     let world = raw[i];
-                    distances.push();
-                }
+                    let dist = levDist(world.name, info[0]);
+                    if (dist < distance) {
+                        distance = dist;
+                        best = world;
+                    }
+                    if (dist == 0 || page >= 5) needsToEnd = true;
+                } else break;
+            }
+            if (needsToEnd) {
+                callback(info);
+            } else {
+                searchWorlds(page + 1, [info[0], distance, best], callback);
             }
         }
     };
-    xhttp.open('GET', 'http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&name=' + info, true);
+    xhttp.open('GET', 'http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&name=' + info[0] + '&page=' + page, true);
     xhttp.send();
 }
 
 function getDateDistance(t, n) {
-    let diff = Math.abs(date_future - date_now) / 1000;
+    let diff = Math.abs(n - t) / 1000;
     let days = Math.floor(diff / 86400);
     diff -= days * 86400;
     let hours = Math.floor(diff / 3600) % 24;
@@ -58,10 +69,10 @@ function getDateDistance(t, n) {
     let minutes = Math.floor(diff / 60) % 60;
     diff -= minutes * 60;
     let seconds = diff % 60;
-    if (days > 1) return days + " Days ago";
-    if (hours > 1) return hours + " Hours ago";
-    if (minutes > 1) return minutes + " Minutes ago";
-    return Math.floor(seconds) + " Seconds ago";
+    if (days > 1) return days + " Days";
+    if (hours > 1) return hours + " Hours";
+    if (minutes > 1) return minutes + " Minutes";
+    return Math.floor(seconds) + " Seconds";
 }
 
 module.exports = {
@@ -75,14 +86,20 @@ module.exports = {
             .setDescription('World you wish to know about')),
 	async execute(interaction) {
         const profileEmbed = new EmbedBuilder();
-        searchWorlds(1, interaction.options.getString('name'), (info) => {
+        let name = interaction.options.getString('name').replace(/[^\x00-\x7F]/g, "");
+        if (name.length == 0) {
+            interaction.reply('World not found, or not specified');
+            return;
+        }
+        searchWorlds(1, [name, 100, 0], (info) => {
             try {
+                let world = info[2];
                 let fields = [{
                     name: 'Biome',
-                    value: biomes[raw.biome][0]
+                    value: biomes[world.biome][0]
                 },{ 
                     name: 'PVP', 
-                    value: raw.pvp ? 'Enabled' : 'Disabled',
+                    value: world.pvp ? 'Enabled' : 'Disabled',
                     inline: true
                 },
                 // { 
@@ -91,16 +108,16 @@ module.exports = {
                 // },
                 { 
                     name: 'Protection', 
-                    value: raw.protected ? 'Enabled' : 'Disabled' ,
+                    value: world.protected ? 'Enabled' : 'Disabled' ,
                     inline: true
                 },{
                     name: 'Generated',
-                    value: `${new Date(raw.gen_date).toDateString()} - ${getDateDistance(new Date(raw.gen_date), Date.now())} ago`
+                    value: `${new Date(world.gen_date).toDateString()} - ${getDateDistance(new Date(world.gen_date), Date.now())} ago`
                 }];
                 profileEmbed
-                    .setTitle(raw.name)
-                    .setThumbnail(biomes[raw.biome][1])
-                    .setDescription(`${Math.round(raw.explored * 1000) / 10}% Explored`)
+                    .setTitle(world.name)
+                    .setThumbnail(biomes[world.biome][1])
+                    .setDescription(`${Math.round(world.explored * 1000) / 10}% Explored`)
                     .addFields(...fields)
                     .setColor(global.color);
                 interaction.reply({ embeds: [profileEmbed] });
