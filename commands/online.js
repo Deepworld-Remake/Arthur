@@ -25,10 +25,8 @@ function getPlayersForList(interaction, page, info, callback) {
                         break;
                     }
                 }
-                console.log(best);
                 let newInfo = [best, players, worlds];
                 if (needsToEnd) {
-                    console.log(newInfo);
                     callback(newInfo);
                 } else {
                     getPlayersForList(interaction, page + 1, newInfo, callback);
@@ -59,7 +57,7 @@ module.exports = {
                     profileEmbed.setDescription(info[1] > 1 ? `There are ${info[1]} Players online ${info[2] > 1 ? `across ${info[2]} Worlds` : 'in 1 World'}` : `There is 1 Player online at the moment`)
                         .addFields({
                             name: 'Current Top World',
-                            value: `${info[0].name} - ${info[0].players == 1 ? '1 Player' : info[0].players + 'Players'}` || 'Undefined'
+                            value: `${info[0].name} - ${info[0].players == 1 ? '1 Player' : info[0].players + ' Players'}` || 'Undefined'
                         })
                         .setColor(global.color);
                     interaction.reply({ embeds: [profileEmbed] });

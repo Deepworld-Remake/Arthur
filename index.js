@@ -43,6 +43,10 @@ function refreshPresence() {
     });
 }
 
+function testForNewWorld() {
+    //http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&sort=created
+}
+
 global.bot.once('ready', () => {
     console.log('\n\n');
     console.log(colors.bold('     ███  ████  █████ █   █ █   █ ████').magenta);
@@ -78,15 +82,15 @@ global.bot.on('messageCreate', message => {
                 try {
                     content.shift();
                     const evalText = Array.isArray(content) ? content.join(' ') : content;
-                    const out = eval('('+content+')')
-                    message.reply(out ? out : 'Eval ran with no output');
+                    const out = eval('('+content+')');
+                    message.reply(`eval > ${out}`);
                 } catch(e) {
                     message.reply('Eval failed with error: ' + e);
                 }
             } else if (txt.startsWith(botname + '.end')) {
                 console.log('Shutting Down...'.red);
                 message.reply('Emergency Shutdown Started').then(process.exit);
-            } else if (txt.startsWith(botname + ' restart')) {
+            } else if (txt.startsWith(botname + '.restart')) {
                 process.on('exit', function () {
                     require('child_process').spawn(process.argv.shift(), process.argv, {
                         cwd: process.cwd(),
@@ -100,13 +104,13 @@ global.bot.on('messageCreate', message => {
                 const logEmbed = new EmbedBuilder()
                     .addFields({
                         name: 'Platform',
-                        value: `${os.platform()} - ${os.release()} / ${os.version()}`
+                        value: `${os.version()} - ${os.release()} / ${os.platform()}`
                     }, {
                         name: 'Host Type',
                         value: `"${os.hostname()}" ${os.type()} - ${os.machine()} / ${os.arch()}`
                     }, {
-                        name: 'CPU',
-                        value: `${os.cpus()[0].model}`
+                        name: 'CPU And Memory',
+                        value: `${os.cpus()[0].model} - ${os.totalmem()} Bytes TMEM`
                     });
                 message.reply({ embeds: [logEmbed] });
             } else if (txt.startsWith(botname + '.reload')) {

@@ -37,7 +37,7 @@ module.exports = {
         if (tmpu.id) profileEmbed.setColor(tmpu.hexAccentColor == null ? global.color : tmpu.hexAccentColor);
         if (user.id == global.botOwner)
             profileEmbed.setFooter({
-                text: 'Owner of Kuma',
+                text: 'Owner of ' + globalThis.bot.user.username,
                 iconURL: 'https://cdn.discordapp.com/emojis/747511563082137710.webp?size=128&quality=lossless'
             });
         interaction.reply({ embeds: [profileEmbed] });
