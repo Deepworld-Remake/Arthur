@@ -5,7 +5,7 @@ const pkg = require('./package.json');
 const colors = require('colors');
 const os = require('os');
 const path = require('path');
-const commandFiles = 'guild help ping speak user world'.split(' ');
+const commandFiles = 'guild help ping speak user world online'.split(' ');
 let envconfpath = path.join(__dirname, './.env');
 require('dotenv').config({ path: envconfpath });
 
@@ -45,13 +45,11 @@ function refreshPresence() {
 
 global.bot.once('ready', () => {
     console.log('\n\n');
-    console.log(colors.bold('     ░▒▓██████▓▒░░▒▓███████▓▒░▒▓███████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓████████▓▒░▒▓███████▓▒░  ░▒▓█▓▒░  ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░').magenta);
-    console.log(colors.bold('    ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░').magenta);
+    console.log(colors.bold('     ███  ████  █████ █   █ █   █ ████').magenta);
+    console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').magenta);
+    console.log(colors.bold('    █████ ████    █   █████ █   █ ████').magenta);
+    console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').magenta);
+    console.log(colors.bold('    █   █ █   █   █   █   █  ███  █   █').magenta);
     console.log(colors.bold(`    v${global.version}\n\n`).magenta);
     console.log(colors.bold(' + ').green + `Logged in as `.cyan + colors.bold(global.bot.user.tag).red + '\n');
     refreshPresence();
