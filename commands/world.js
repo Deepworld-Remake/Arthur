@@ -33,17 +33,35 @@ function searchWorlds(page, info, callback) {
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let json = xhttp.responseText;
-            let raw = JSON.parse(json);
-            let distances = [];
             let needsToEnd = false;
+            let raw = JSON.parse(json);
+            if (raw.length == 0) needsToEnd = true;
+            let distances = info[0] || [];
             for (let i = 0; i < raw.length; i++) {
-                let world = raw[i];
-                distances.push();
+                if (!needsToEnd) {
+                    let world = raw[i];
+                    distances.push();
+                }
             }
         }
     };
     xhttp.open('GET', 'http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&name=' + info, true);
     xhttp.send();
+}
+
+function getDateDistance(t, n) {
+    let diff = Math.abs(date_future - date_now) / 1000;
+    let days = Math.floor(diff / 86400);
+    diff -= days * 86400;
+    let hours = Math.floor(diff / 3600) % 24;
+    diff -= hours * 3600;
+    let minutes = Math.floor(diff / 60) % 60;
+    diff -= minutes * 60;
+    let seconds = diff % 60;
+    if (days > 1) return days + " Days ago";
+    if (hours > 1) return hours + " Hours ago";
+    if (minutes > 1) return minutes + " Minutes ago";
+    return Math.floor(seconds) + " Seconds ago";
 }
 
 module.exports = {
@@ -77,7 +95,7 @@ module.exports = {
                     inline: true
                 },{
                     name: 'Generated',
-                    value: new Date(raw.gen_date).toDateString()
+                    value: `${new Date(raw.gen_date).toDateString()} - ${getDateDistance(new Date(raw.gen_date), Date.now())} ago`
                 }];
                 profileEmbed
                     .setTitle(raw.name)
