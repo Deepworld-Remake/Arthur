@@ -84,6 +84,7 @@ module.exports = {
             .setName('name')
             .setRequired(true)
             .setDescription('World you wish to know about')),
+    search(page, info, callback) { searchWorlds(page, info, callback) },
 	async execute(interaction) {
         const profileEmbed = new EmbedBuilder();
         let name = interaction.options.getString('name').replace(/[^\x00-\x7F]/g, "");
