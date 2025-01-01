@@ -51,9 +51,14 @@ function testDate(t, n) {
 }
 
 function testForNewWorld() {
-    
-    //http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&sort=created
+    if (active.world.length > 0) {
+        if (testDate(active.date, Date.now())) {
 
+        }
+    }
+    //http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&sort=created
+    // server = 237835843677585408
+    // channel = 237836153968001025
 }
 
 global.bot.once('ready', () => {
