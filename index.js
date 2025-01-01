@@ -49,12 +49,12 @@ function testForNewWorld() {
 
 global.bot.once('ready', () => {
     console.log('\n\n');
-    console.log(colors.bold('     ███  ████  █████ █   █ █   █ ████').magenta);
-    console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').magenta);
-    console.log(colors.bold('    █████ ████    █   █████ █   █ ████').magenta);
-    console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').magenta);
-    console.log(colors.bold('    █   █ █   █   █   █   █  ███  █   █').magenta);
-    console.log(colors.bold(`    v${global.version}\n\n`).magenta);
+    console.log(colors.bold('     ███  ████  █████ █   █ █   █ ████').yellow);
+    console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').yellow);
+    console.log(colors.bold('    █████ ████    █   █████ █   █ ████').yellow);
+    console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').yellow);
+    console.log(colors.bold('    █   █ █   █   █   █   █  ███  █   █').yellow);
+    console.log(colors.bold(`    v${global.version}\n\n`).yellow);
     console.log(colors.bold(' + ').green + `Logged in as `.cyan + colors.bold(global.bot.user.tag).red + '\n');
     refreshPresence();
 });
