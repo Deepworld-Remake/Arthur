@@ -36,10 +36,10 @@ function refreshPresence() {
     global.bot.user.setPresence({
         activities: [{
             name: 'v' + global.version,
-            type: ActivityType.Streaming,
-            url: 'https://www.twitch.tv/ '
+            type: ActivityType.Custom
+            // url: 'https://www.twitch.tv/ '
         }],
-        status: 'online'
+        status: 'idle'
     });
 }
 

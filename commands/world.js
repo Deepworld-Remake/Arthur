@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, inlineCode } = require('discord.js');
 let XMLHttpRequest = require('xhr2');
 
 let biomes = {
@@ -21,7 +21,6 @@ module.exports = {
             .setRequired(true)
             .setDescription('World you wish to know about')),
 	async execute(interaction) {
-        const guild = interaction.guild;
         const profileEmbed = new EmbedBuilder();
         let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
@@ -34,19 +33,24 @@ module.exports = {
                         value: biomes[raw.biome][0]
                     },{ 
                         name: "PVP", 
-                        value: raw.pvp ? "Enabled" : "Disabled" 
-                    },{ 
-                        name: "Private", 
-                        value: raw.private ? "Yes" : "No" 
-                    },{ 
-                        name: "Protected", 
-                        value: raw.protected ? "Yes" : "No" 
+                        value: raw.pvp ? "Enabled" : "Disabled",
+                        inline: true
+                    },
+                    // { 
+                    //     name: "Private", 
+                    //     value: raw.private ? "Yes" : "No" 
+                    // },
+                    { 
+                        name: "Protection", 
+                        value: raw.protected ? "Enabled" : "Disabled" ,
+                        inline: true
+                    },{
+                        name: "Generated",
+                        value: new Date(raw.gen_date).toDateString()
                     }];
                     profileEmbed
-                        .setAuthor({
-                            name: raw.name, 
-                            iconURL: biomes[raw.biome][1]
-                        })
+                        .setTitle(raw.name)
+                        .setThumbnail(biomes[raw.biome][1])
                         .setDescription(`${Math.round(raw.explored * 1000) / 10}% Explored`)
                         .addFields(...fields)
                         .setColor(global.color);
