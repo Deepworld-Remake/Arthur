@@ -113,13 +113,16 @@ module.exports = {
                     inline: true
                 },{
                     name: 'Generated',
-                    value: `${new Date(world.gen_date).toDateString()} - ${getDateDistance(new Date(world.gen_date), Date.now())} ago`
+                    value: `${new Date(world.gen_date).toDateString()} - ${getDateDistance(new Date(world.gen_date), Date.now())} ago\n-# ${new Date(world.gen_date).toUTCString()}`
                 }];
                 profileEmbed
                     .setTitle(world.name)
                     .setThumbnail(biomes[world.biome][1])
                     .setDescription(`${Math.round(world.explored * 1000) / 10}% Explored`)
                     .addFields(...fields)
+                    // .setFooter({
+                    //     text: 
+                    // })
                     .setColor(global.color);
                 interaction.reply({ embeds: [profileEmbed] });
             } catch(e) {

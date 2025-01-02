@@ -86,7 +86,7 @@ function announceWorld() {
         'space': ['Space', 'https://cdn.discordapp.com/attachments/1041397042582388919/1323794948629467198/space.png'],
         'deep': ['Deep', 'https://cdn.discordapp.com/attachments/1041397042582388919/1323794949602283652/deep.png']
     }
-    global.bot.channels.cache.get('237836153968001025').send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})\n\n(Please ignore these messages while the bot is still in development)`);
+    global.bot.channels.cache.get('416409883592884225').send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
 }
 
 function format(seconds){
