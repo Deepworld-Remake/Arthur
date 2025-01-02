@@ -143,6 +143,13 @@ global.bot.on('messageCreate', message => {
                     message.reply('Eval failed with error: ' + e);
                 }
             }
+            if (intcom('speak')) {
+                const content = txt.split(' ');
+                try {
+                    content.shift();
+                    message.channel.send(content.join(' '));
+                } catch(e) { }
+            }
             if (intcom('end')) {
                 console.log('Shutting Down...'.red);
                 message.reply('Emergency Shutdown Started').then(process.exit);
