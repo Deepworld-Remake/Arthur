@@ -87,18 +87,20 @@ function announceWorld() {
         'deep': ['Deep', 'https://cdn.discordapp.com/attachments/1041397042582388919/1323794949602283652/deep.png']
     }
     let channel = global.bot.channels.cache.get('416409883592884225');
-    let messages = channel.messages.fetch({limit: 5});
-    let needsToEdit = false;
-    for (let msg in messages) {
-        if (msg.author.id === global.bot.user.id) {
-            if (msg.content.contains('new zone')) {
-                needsToEdit = true;
-                msg.edit(msg.content + `\nAnother has been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
+    channel.messages.fetch({limit: 5}).then((messages) => {
+        let needsToEdit = false;
+        messages.forEach((msg) => {
+            if (msg.author.id == global.bot.user.id) {
+                if (msg.content.includes('new zone')) {
+                    needsToEdit = true;
+                    msg.edit(msg.content + `\nAnother has been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
+                    return;
+                }
             }
-        }
-    }
-    if (!needsToEdit)
-        channel.send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
+        }) 
+        if (!needsToEdit)
+            channel.send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
+    });
 }
 
 function format(seconds){
