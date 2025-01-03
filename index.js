@@ -7,9 +7,12 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const commandFiles = 'guild help ping speak user world online'.split(' ');
-let active = require('./active.json');
 let XMLHttpRequest = require('xhr2');
 let envconfpath = path.join(__dirname, './.env');
+let active = {
+    world: {},
+    date: ""
+};
 require('dotenv').config({ path: envconfpath });
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
@@ -61,7 +64,6 @@ function testForNewWorld() {
                 active.world = world;
                 active.date = new Date(world.gen_date);
                 announceWorld();
-                fs.writeFileSync('./active.json', JSON.stringify(active));
             } else if (!active.world.name || world.name != active.world.name) {
                 active.world = world;
                 active.date = new Date(world.gen_date);
