@@ -10,9 +10,9 @@ function getPlayersForList(interaction, page, info, callback) {
             let json = xhttp.responseText;
             try {
                 let raw = JSON.parse(json);
-                let best = {};
-                let players = 0; 
-                let worlds = 0;
+                let best = info[0] || {};
+                let players = info[1] || 0; 
+                let worlds = info[2] || 0;
                 if (page == 1) best = raw[0];
                 let needsToEnd = false;
                 for (let i = 0; i < raw.length; i++) {
