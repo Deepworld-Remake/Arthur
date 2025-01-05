@@ -61,8 +61,12 @@ function testForNewWorld() {
             let json = xhttp.responseText;
             let world = JSON.parse(json)[0];
             if (testDate(active.date, Date.now())) {
+                let oldDate = active.date;
                 active.world = world;
                 active.date = new Date(world.gen_date);
+                console.log("World: " + active.world.name);
+                console.log("Date: " + active.date);
+                console.log("Difference: " + Date.now() - active.date);
                 announceWorld();
             } else if (!active.world.name || world.name != active.world.name) {
                 active.world = world;
