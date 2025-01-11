@@ -76,7 +76,7 @@ function getDateDistance(t, n) {
 }
 
 module.exports = {
-    local: false,
+    local: true,
 	data: new SlashCommandBuilder()
         .setName('world')
         .setDescription(`Grab the available info about a world`)

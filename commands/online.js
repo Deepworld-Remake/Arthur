@@ -45,7 +45,7 @@ function getPlayersForList(interaction, page, info, callback) {
 }
 
 module.exports = {
-    local: false,
+    local: true,
 	data: new SlashCommandBuilder()
         .setName('online')
         .setDescription(`See how many players are online in deepworld`),
