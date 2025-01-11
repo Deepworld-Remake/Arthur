@@ -199,7 +199,7 @@ global.bot.on('messageCreate', message => {
                 message.reply(`Reloading REST commands...`);
                 rest.put(Routes.applicationCommands(global.bot.user.id), { body: global.globals }).then((e) => {
                     rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: global.locals }).then(() => {
-                        rest.put().then(() => {
+                        rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.devserver), { body: global.locals }).then(() => {
                             message.channel.send((global.commands.length) + ' slash commands Updated');
                         });
                     });
