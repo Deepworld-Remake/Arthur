@@ -6,7 +6,7 @@ const colors = require('colors');
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
-const commandFiles = 'guild help ping speak user world online'.split(' ');
+const commandFiles = 'guild help ping user world online'.split(' ');
 let XMLHttpRequest = require('xhr2');
 let envconfpath = path.join(__dirname, './.env');
 let active = {
@@ -199,7 +199,9 @@ global.bot.on('messageCreate', message => {
                 message.reply(`Reloading REST commands...`);
                 rest.put(Routes.applicationCommands(global.bot.user.id), { body: global.globals }).then((e) => {
                     rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: global.locals }).then(() => {
-                        message.channel.send((global.commands.length) + ' slash commands Updated');
+                        rest.put().then(() => {
+                            message.channel.send((global.commands.length) + ' slash commands Updated');
+                        });
                     });
                 });
             }
