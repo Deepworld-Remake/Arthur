@@ -98,7 +98,7 @@ function announceWorld() {
                     needsToEdit = true;
                     if (msg.content.includes('More have'))
                         msg.edit(msg.content + `, ${active.world.name} (${biomes[active.world.biome][0]})`);
-                    else msg.edit(msg.content + `\nMore have been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
+                    else msg.edit(msg.content + `\n-# More have been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
                     return;
                 }
             }
