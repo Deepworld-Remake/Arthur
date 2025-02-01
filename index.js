@@ -93,6 +93,7 @@ function announceWorld() {
         let needsToEdit = false;
         messages.forEach((msg) => {
             if (msg.author.id == global.bot.user.id) {
+                if (msg.content.length > 200) return;
                 if (msg.content.includes('new zone')) {
                     needsToEdit = true;
                     if (msc.content.includes('More have'))
