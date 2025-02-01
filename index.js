@@ -95,7 +95,9 @@ function announceWorld() {
             if (msg.author.id == global.bot.user.id) {
                 if (msg.content.includes('new zone')) {
                     needsToEdit = true;
-                    msg.edit(msg.content + `\nAnother has been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
+                    if (msc.content.includes('More have'))
+                        msg.edit(msg.content + `, ${active.world.name} (${biomes[active.world.biome][0]})`);
+                    else msg.edit(msg.content + `\nMore have been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
                     return;
                 }
             }
