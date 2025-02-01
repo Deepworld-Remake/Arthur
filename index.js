@@ -96,7 +96,7 @@ function announceWorld() {
                 if (msg.content.length > 200) return;
                 if (msg.content.includes('new zone')) {
                     needsToEdit = true;
-                    if (msc.content.includes('More have'))
+                    if (msg.content.includes('More have'))
                         msg.edit(msg.content + `, ${active.world.name} (${biomes[active.world.biome][0]})`);
                     else msg.edit(msg.content + `\nMore have been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
                     return;
