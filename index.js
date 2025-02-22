@@ -93,7 +93,7 @@ function announceWorld() {
         let needsToEdit = false;
         messages.forEach((msg) => {
             if (msg.author.id == global.bot.user.id) {
-                if (msg.content.length > 200) return;
+                if (msg.content.length > 400) return;
                 if (msg.content.includes('new zone')) {
                     needsToEdit = true;
                     if (msg.content.includes('More have'))
@@ -126,8 +126,8 @@ global.bot.once('ready', () => {
     console.log(colors.bold('    █████ ████    █   █████ █   █ ████').yellow);
     console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').yellow);
     console.log(colors.bold('    █   █ █   █   █   █   █  ███  █   █').yellow);
-    console.log(colors.bold(`    v${global.version}\n\n`).yellow);
-    console.log(colors.bold(' + ').green + `Logged in as `.cyan + colors.bold(global.bot.user.tag).red + '\n');
+    console.log(colors.bold(`    v${global.version}\n`).yellow);
+    console.log(colors.bold('    + ').green + `Logged in as `.cyan + colors.bold(global.bot.user.tag).red + '\n');
     refreshPresence();
     setInterval(testForNewWorld, 30000);
 });
@@ -151,13 +151,16 @@ global.bot.on('messageCreate', message => {
         let botname = bot.user.username.toLowerCase();
         let intcom = (command) => txt.startsWith(botname + '.' + command);
         try {
-            if (intcom('eval')) {
+            if (intcom('eval') || intcom('evalc')) {
                 const content = txt.split(' ');
                 try {
                     content.shift();
                     const evalText = Array.isArray(content) ? content.join(' ') : content;
                     const out = eval('('+content+')');
-                    message.reply(`eval > ${out}`);
+                    if (intcom('evalc'))
+                        message.reply('```\n'+out+'\n```');
+                    else
+                        message.reply(`eval > ${out}`);
                 } catch(e) {
                     message.reply('Eval failed with error: ' + e);
                 }

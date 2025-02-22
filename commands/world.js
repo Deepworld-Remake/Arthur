@@ -50,7 +50,7 @@ function searchWorlds(page, info, callback) {
                 } else break;
             }
             if (needsToEnd) {
-                callback(info);
+                callback([info[0], distance, best]);
             } else {
                 searchWorlds(page + 1, [info[0], distance, best], callback);
             }
@@ -62,13 +62,16 @@ function searchWorlds(page, info, callback) {
 
 function getDateDistance(t, n) {
     let diff = Math.abs(n - t) / 1000;
+    let years = Math.floor(diff / 31536000);
+    let months = Math.floor(diff / 2592000);
+    let weeks = Math.floor(diff / 604800);
     let days = Math.floor(diff / 86400);
-    diff -= days * 86400;
     let hours = Math.floor(diff / 3600) % 24;
-    diff -= hours * 3600;
     let minutes = Math.floor(diff / 60) % 60;
-    diff -= minutes * 60;
     let seconds = diff % 60;
+    if (years > 1) return years + " Years";
+    if (months > 2) return months + " Months";
+    if (weeks > 2) return weeks + " Weeks";
     if (days > 1) return days + " Days";
     if (hours > 1) return hours + " Hours";
     if (minutes > 1) return minutes + " Minutes";
@@ -87,7 +90,7 @@ module.exports = {
     search(page, info, callback) { searchWorlds(page, info, callback) },
 	async execute(interaction) {
         const profileEmbed = new EmbedBuilder();
-        let name = interaction.options.getString('name').replace(/[^\x00-\x7F]/g, "");
+        let name = interaction.options.getString('name').replace(/[^[\x00-\x7F]+$/g, "");
         if (name.length == 0) {
             interaction.reply('World not found, or not specified');
             return;
@@ -95,9 +98,11 @@ module.exports = {
         searchWorlds(1, [name, 100, 0], (info) => {
             try {
                 let world = info[2];
+                const market = world.activity == "market" ? true : false;
+                const gendate = new Date(world.gen_date);
                 let fields = [{
                     name: 'Biome',
-                    value: biomes[world.biome][0]
+                    value: biomes[world.biome][0] + (market ? ' (Market World)' : '')
                 },{ 
                     name: 'PVP', 
                     value: world.pvp ? 'Enabled' : 'Disabled',
@@ -113,7 +118,7 @@ module.exports = {
                     inline: true
                 },{
                     name: 'Generated',
-                    value: `${new Date(world.gen_date).toDateString()} - ${getDateDistance(new Date(world.gen_date), Date.now())} ago\n-# ${new Date(world.gen_date).toUTCString()}`
+                    value: `${gendate.toUTCString()} (${getDateDistance(gendate, Date.now())} ago)`
                 }];
                 profileEmbed
                     .setTitle(world.name)
@@ -123,11 +128,12 @@ module.exports = {
                     // .setFooter({
                     //     text: 
                     // })
-                    .setColor(global.color);
+                    .setColor(market ? '5ee036' : global.color);
                 interaction.reply({ embeds: [profileEmbed] });
             } catch(e) {
                 if (interaction.user.id == global.botOwner)
                     interaction.reply('World not found, or not specified\n-# Debug: ' + e);
+                    //console.log(e);
                 else
                     interaction.reply('World not found, or not specified');
             }
