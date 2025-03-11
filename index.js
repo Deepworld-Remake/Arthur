@@ -1,5 +1,5 @@
 const { Client, Collection, REST, GatewayIntentBits, 
-        Partials, Routes, EmbedBuilder, ActivityType } = require('discord.js');
+        Partials, Routes, EmbedBuilder, ActivityType, MessageFlags } = require('discord.js');
 const config = require('./config.json');
 const pkg = require('./package.json');
 const colors = require('colors');
