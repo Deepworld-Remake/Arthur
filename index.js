@@ -139,13 +139,13 @@ global.bot.on('interactionCreate', async interaction => {
         await global.bot.commands.get(interaction.commandName).execute(interaction);
     } catch (error) {
         if (interaction.user.id === config.bot.owner) {
-            await interaction.reply({ content: `Error: ${error}`, ephemeral: true });
+            await interaction.reply({ content: `Error: ${error}`, flags: MessageFlags.Ephemeral });
             console.log(error);
         }
     }
 });
 
-global.bot.on('messageCreate', message => { 
+global.bot.on('messageCreate', async message => { 
     const txt = message.content;
     if (message.author.id == config.bot.owner) {
         let botname = bot.user.username.toLowerCase();
@@ -158,23 +158,23 @@ global.bot.on('messageCreate', message => {
                     const evalText = Array.isArray(content) ? content.join(' ') : content;
                     const out = eval('('+content+')');
                     if (intcom('evalc'))
-                        message.reply('```\n'+out+'\n```');
+                        await message.reply('```\n'+out+'\n```');
                     else
-                        message.reply(`eval > ${out}`);
+                        await message.reply(`eval > ${out}`);
                 } catch(e) {
-                    message.reply('Eval failed with error: ' + e);
+                    await message.reply('Eval failed with error: ' + e);
                 }
             }
             if (intcom('speak')) {
                 const content = txt.split(' ');
                 try {
                     content.shift();
-                    message.channel.send(content.join(' '));
+                    await message.channel.send(content.join(' '));
                 } catch(e) { }
             }
             if (intcom('end')) {
                 console.log('Shutting Down...'.red);
-                message.reply('Emergency Shutdown Started').then(process.exit);
+                await message.reply('Emergency Shutdown Started').then(process.exit);
             }
             if (intcom('restart')) {
                 process.on('exit', function () {
@@ -185,7 +185,7 @@ global.bot.on('messageCreate', message => {
                     });
                 });
                 console.log('Restarting...'.red);
-                message.reply('Emergency Restart Started').then(process.exit);
+                await message.reply('Emergency Restart Started').then(process.exit);
             }
             if (intcom('host') || intcom('info')) {
                 const logEmbed = new EmbedBuilder()
@@ -199,23 +199,23 @@ global.bot.on('messageCreate', message => {
                         name: 'CPU And Memory',
                         value: `${os.cpus()[0].model} - Free Memory: ${os.freemem()}/${os.totalmem()} Bytes`
                     });
-                message.reply({ embeds: [logEmbed] });
+                await message.reply({ embeds: [logEmbed] });
             }
             if (intcom('reload')) {
-                message.reply(`Reloading REST commands...`);
-                rest.put(Routes.applicationCommands(global.bot.user.id), { body: global.globals }).then((e) => {
-                    rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: global.locals }).then(() => {
-                        rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.devserver), { body: global.locals }).then(() => {
-                            message.channel.send((global.commands.length) + ' slash commands Updated');
+                await message.reply(`Reloading REST commands...`);
+                rest.put(Routes.applicationCommands(global.bot.user.id), { body: global.globals }).then( async (e) => {
+                    rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: global.locals }).then( async () => {
+                        rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.devserver), { body: global.locals }).then( async () => {
+                            await message.channel.send((global.commands.length) + ' slash commands Updated');
                         });
                     });
                 });
             }
             if (intcom('reset')) {
-                message.reply(`Deleting REST commands...`);
-                rest.put(Routes.applicationCommands(global.bot.user.id), { body: [] }).then(() => {
-                    rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: [] }).then(() => {
-                        message.channel.send((global.commands.length) + ' slash commands Deleted');
+                await message.reply(`Deleting REST commands...`);
+                rest.put(Routes.applicationCommands(global.bot.user.id), { body: [] }).then( async () => {
+                    rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: [] }).then( async () => {
+                        await message.channel.send((global.commands.length) + ' slash commands Deleted');
                     });
                 });
             }
@@ -229,13 +229,13 @@ global.bot.on('messageCreate', message => {
                         name: 'Host and Mem',
                         value: `Platform: ${process.platform} - V8 Mem: ${process.memoryUsage().heapUsed}/${process.memoryUsage().heapTotal} Bytes`
                     });
-                message.reply({ embeds: [logEmbed] });
+                await message.reply({ embeds: [logEmbed] });
             }
             if (intcom('testDiscoveredWorld')) { // Unfinished
                 announceWorld();
             }
         } catch(e) {
-            message.reply('Failed with error: ' + e);
+            await message.reply('Failed with error: ' + e);
         }
     }
 });

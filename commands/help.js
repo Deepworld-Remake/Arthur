@@ -17,6 +17,6 @@ module.exports = {
 					inline: true
 				});
 			});
-		await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
+		await interaction.reply({ embeds: [helpEmbed], flags: MessageFlags.Ephemeral });
 	},
 };

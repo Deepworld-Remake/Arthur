@@ -14,13 +14,18 @@ module.exports = {
 			})
 			.setDescription(`Process Identifier: ${process.pid}`)
 			.addFields({
-				name: 'Ping',
-				value: `${Math.round(Math.abs((Date.now() - interaction.createdTimestamp)) / 100.0)}ms ${Math.round(global.bot.ws.ping)}ams`
-			}, {
 				name: 'Version',
 				value: `${global.version}`
+			}, {
+				name: 'API Ping',
+				value: `${Math.round(global.bot.ws.ping)}ms`
 			})
 			.setColor(global.color);
-		await interaction.reply({ embeds: [pingEmbed], ephemeral: interaction.options.getInteger('hidden') == 1 ? true : false});
+		let sent = await interaction.reply({ embeds: [pingEmbed], flags: interaction.options.getInteger('hidden') == 1 ? MessageFlags.Ephemeral : '' });
+		pingEmbed.addFields({
+			name: 'Roundtrip Ping',
+			value: `${sent.createdTimestamp - interaction.createdTimestamp}ms`
+		})
+		interaction.editReply({ embeds: [pingEmbed], flags: interaction.options.getInteger('hidden') == 1 ? MessageFlags.Ephemeral : '' });
 	},
 };
