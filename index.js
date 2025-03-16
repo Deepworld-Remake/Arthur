@@ -78,7 +78,7 @@ function testForNewWorld() {
     // channel = 416409883592884225
 }
 
-function announceWorld() {
+async function announceWorld() {
     let biomes = {
         'plain': ['Temperate', 'https://media.discordapp.net/attachments/1041397042582388919/1323794948843372636/plain.png'],
         'arctic': ['Arctic', 'https://cdn.discordapp.com/attachments/1041397042582388919/1323794949153755177/arctic.png'],
@@ -89,23 +89,27 @@ function announceWorld() {
         'deep': ['Deep', 'https://cdn.discordapp.com/attachments/1041397042582388919/1323794949602283652/deep.png']
     }
     let channel = global.bot.channels.cache.get('416409883592884225');
-    channel.messages.fetch({limit: 5}).then((messages) => {
-        let needsToEdit = false;
-        messages.forEach((msg) => {
-            if (msg.author.id == global.bot.user.id) {
-                if (msg.content.length > 400) return;
-                if (msg.content.includes('new zone')) {
-                    needsToEdit = true;
-                    if (msg.content.includes('More have'))
-                        msg.edit(msg.content + `, ${active.world.name} (${biomes[active.world.biome][0]})`);
-                    else msg.edit(msg.content + `\n-# More have been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
-                    return;
+    try {
+        await channel.messages.fetch({limit: 5}).then((messages) => {
+            let needsToEdit = false;
+            messages.forEach((msg) => {
+                if (msg.author.id == global.bot.user.id) {
+                    if (msg.content.length > 400) return;
+                    if (msg.content.includes('new zone')) {
+                        needsToEdit = true;
+                        if (msg.content.includes('More have'))
+                            msg.edit(msg.content + `, ${active.world.name} (${biomes[active.world.biome][0]})`);
+                        else await msg.edit(msg.content + `\n-# More have been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
+                        return;
+                    }
                 }
-            }
-        }) 
-        if (!needsToEdit)
-            channel.send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
-    });
+            }) 
+            if (!needsToEdit)
+                channel.send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
+        });
+    } catch(e) {
+        console.warn(e);
+    }
 }
 
 function format(seconds){
@@ -115,11 +119,10 @@ function format(seconds){
     var hours = Math.floor(seconds / (60 * 60));
     var minutes = Math.floor(seconds % (60 * 60) / 60);
     var seconds = Math.floor(seconds % 60);
-  
     return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
 }
 
-global.bot.once('ready', () => {
+global.bot.once('ready', async () => {
     console.log('\n\n');
     console.log(colors.bold('     ███  ████  █████ █   █ █   █ ████').yellow);
     console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').yellow);
@@ -137,11 +140,8 @@ global.bot.on('interactionCreate', async interaction => {
     if (!global.bot.commands.has(interaction.commandName)) return;
     try {
         await global.bot.commands.get(interaction.commandName).execute(interaction);
-    } catch (error) {
-        if (interaction.user.id === config.bot.owner) {
-            await interaction.reply({ content: `Error: ${error}`, flags: MessageFlags.Ephemeral });
-            console.log(error);
-        }
+    } catch (e) {
+        if (interaction.user.id === config.bot.owner) await interaction.reply({ content: `Error: ${e}`, flags: MessageFlags.Ephemeral });
     }
 });
 
