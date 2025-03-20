@@ -234,6 +234,18 @@ global.bot.on('messageCreate', async message => {
             if (intcom('testDiscoveredWorld')) { // Unfinished
                 announceWorld();
             }
+            if (intcom('devvify')) {
+                const content = txt.split(' ');
+                try {
+                    await message.guild.members.fetch(content[1]).then((member) => {
+                        message.guild.roles.fetch('1320596062863626301').then((role) => {
+                            member.roles.add(role);
+                        })
+                    });
+                } catch(e) {
+                    await message.reply('Eval failed with error: ' + e);
+                }
+            }
         } catch(e) {
             await message.reply('Failed with error: ' + e);
         }
