@@ -28,7 +28,7 @@ const levDist = (s, t) => {
     return arr[t.length][s.length];
 };  
 
-function searchWorlds(page, info, callback) {
+function searchWorlds(page, info, callback, api_token) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -52,11 +52,11 @@ function searchWorlds(page, info, callback) {
             if (needsToEnd) {
                 callback([info[0], distance, best]);
             } else {
-                searchWorlds(page + 1, [info[0], distance, best], callback);
+                searchWorlds(page + 1, [info[0], distance, best], callback, api_token);
             }
         }
     };
-    xhttp.open('GET', 'http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&name=' + info[0] + '&page=' + page, true);
+    xhttp.open('GET', 'http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=' + api_token + '&name=' + info[0] + '&page=' + page, true);
     xhttp.send();
 }
 
@@ -86,7 +86,12 @@ module.exports = {
         .addStringOption((option) => option
             .setName('name')
             .setRequired(true)
-            .setDescription('World you wish to know about')),
+            .setDescription('World you wish to know about'))
+        .addStringOption((option) => option
+            .setName('token')
+            .setAutocomplete(false)
+            .setRequired(false)
+            .setDescription('Use your api token (/api ingame) to show hidden worlds')),
     search(page, info, callback) { searchWorlds(page, info, callback) },
 	async execute(interaction) {
         const profileEmbed = new EmbedBuilder();
@@ -95,6 +100,7 @@ module.exports = {
             interaction.reply('World not found, or not specified');
             return;
         }
+        let token = interaction.options.getString('token');
         searchWorlds(1, [name, 100, 0], (info) => {
             try {
                 let world = info[2];
@@ -129,6 +135,11 @@ module.exports = {
                     //     text: 
                     // })
                     .setColor(market ? '5ee036' : global.color);
+                if (interaction.options.getString('token')) {
+                    profileEmbed.setFooter({
+                        text: "Private World (Accessed with API Token)"
+                    });
+                }
                 interaction.reply({ embeds: [profileEmbed] });
             } catch(e) {
                 if (interaction.user.id == global.botOwner)
@@ -137,6 +148,6 @@ module.exports = {
                 else
                     interaction.reply('World not found, or not specified');
             }
-        });
+        }, token);
 	},
 };
