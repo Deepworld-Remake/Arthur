@@ -156,13 +156,15 @@ global.bot.on('messageCreate', async message => {
                 try {
                     content.shift();
                     const evalText = Array.isArray(content) ? content.join(' ') : content;
+                    console.log(evalText);
                     const out = eval('('+content+')');
                     if (intcom('evalc'))
                         await message.reply('```\n'+out+'\n```');
                     else
                         await message.reply(`eval > ${out}`);
                 } catch(e) {
-                    await message.reply('Eval failed with error: ' + e);
+                    await message.reply('Eval failed with error: ' + e, { "allowed_mentions": { "parse": [] } });
+                    console.warn(e);
                 }
             }
             if (intcom('speak')) {

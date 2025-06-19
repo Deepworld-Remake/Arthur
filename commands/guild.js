@@ -26,24 +26,26 @@ module.exports = {
 	async execute(interaction) {
         const guild = interaction.guild;
         const cret = guild.createdAt;
-        const profileEmbed = new EmbedBuilder()
-            .setAuthor({
-                name: guild.name, 
-                iconURL: guild.iconURL()
-            })
-            .setDescription(`${guild.id}`)
-            .addFields({
-                name: `Members`,
-                value: `${guild.memberCount}`
-            }, {
-                name: `Created On`,
-                value: `${cret.toUTCString()} (${getDateDistance(cret, Date.now())} ago)`
-            }, {
-                name: 'Owner',
-                value: `<@${guild.ownerId}>`
-            })
-            .setColor(global.color);
-        if (guild.description) profileEmbed.setDescription(`${guild.id}\n\n${guild.description}`)
-        interaction.reply({ embeds: [profileEmbed] });
+        guild.fetchOwner().then((owner) => {
+            const profileEmbed = new EmbedBuilder()
+                .setAuthor({
+                    name: guild.name, 
+                    iconURL: guild.iconURL()
+                })
+                .setDescription(`${guild.id}`)
+                .addFields({
+                    name: `Members`,
+                    value: `${guild.memberCount}`
+                }, {
+                    name: `Created On`,
+                    value: `${cret.toUTCString()} (${getDateDistance(cret, Date.now())} ago)`
+                }, {
+                    name: 'Owner',
+                    value: `${owner.displayName} - @${owner.user.username} - ${owner.id}`
+                })
+                .setColor(global.color);
+            if (guild.description) profileEmbed.setDescription(`${guild.id}\n\n${guild.description}`)
+            interaction.reply({ embeds: [profileEmbed] }, { "allowed_mentions": { "parse": [] } });
+        });
 	},
 };
