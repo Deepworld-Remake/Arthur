@@ -38,6 +38,9 @@ module.exports = {
             }, {
                 name: `Created On`,
                 value: `${cret.toUTCString()} (${getDateDistance(cret, Date.now())} ago)`
+            }, {
+                name: 'Owner',
+                value: `<@${guild.ownerId}>`
             })
             .setColor(global.color);
         if (guild.description) profileEmbed.setDescription(`${guild.id}\n\n${guild.description}`)
