@@ -254,7 +254,7 @@ global.bot.on('messageCreate', async message => {
                     message.guild.members.fetch(content[1]).then((member) => {
                         member.roles.add('588145213776855050').then(() => {
                             member.roles.add('663513461438808094').then(() => {
-                                message.reply(`${specMem.displayName} has been Inducted`);
+                                message.reply(`${member.displayName} has been Inducted`);
                             });
                         });
                     });
