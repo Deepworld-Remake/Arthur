@@ -129,7 +129,7 @@ module.exports = {
                 profileEmbed
                     .setTitle(world.name)
                     .setThumbnail(biomes[world.biome][1])
-                    .setImage(`https://v2202410239072292297.goodsrv.de:5003/v1/map/${world.name}`)
+                    .setImage(encodeURI(`http://v2202410239072292297.goodsrv.de:5003/v1/map/${world.name}`))
                     .setDescription(`${Math.round(world.explored * 1000) / 10}% Explored`)
                     .addFields(...fields)
                     // .setFooter({
