@@ -89,6 +89,8 @@ async function announceWorld() {
         'deep': ['Deep', 'https://cdn.discordapp.com/attachments/1041397042582388919/1323794949602283652/deep.png']
     }
     let channel = global.bot.channels.cache.get('416409883592884225');
+    let channel2 = global.bot.channels.cache.get('1391510758734561493');
+
     try {
         await channel.messages.fetch({limit: 5}).then((messages) => {
             let needsToEdit = false;
@@ -106,6 +108,27 @@ async function announceWorld() {
             }) 
             if (!needsToEdit)
                 channel.send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
+        });
+    } catch(e) {
+        console.warn(e);
+    }
+    try {
+        await channel2.messages.fetch({limit: 5}).then((messages) => {
+            let needsToEdit = false;
+            messages.forEach((msg) => {
+                if (msg.author.id == global.bot.user.id) {
+                    if (msg.content.length > 400) return;
+                    if (msg.content.includes('new zone')) {
+                        needsToEdit = true;
+                        if (msg.content.includes('More have'))
+                            msg.edit(msg.content + `, ${active.world.name} (${biomes[active.world.biome][0]})`);
+                        else msg.edit(msg.content + `\n-# More have been found! ${active.world.name} (${biomes[active.world.biome][0]})`);
+                        return;
+                    }
+                }
+            }) 
+            if (!needsToEdit)
+                channel2.send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
         });
     } catch(e) {
         console.warn(e);
