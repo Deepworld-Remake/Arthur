@@ -207,8 +207,10 @@ global.bot.on('messageCreate', async message => {
                 await message.reply(`Reloading REST commands...`);
                 rest.put(Routes.applicationCommands(global.bot.user.id), { body: global.globals }).then( async (e) => {
                     rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: global.locals }).then( async () => {
-                        rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.devserver), { body: global.locals }).then( async () => {
-                            await message.channel.send((global.commands.length) + ' slash commands Updated');
+                        rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.extraserver), { body: global.locals }).then( async () => {
+                            rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.devserver), { body: global.locals }).then( async () => {
+                                await message.channel.send((global.commands.length) + ' slash commands Updated');
+                            });
                         });
                     });
                 });
@@ -216,7 +218,7 @@ global.bot.on('messageCreate', async message => {
             if (intcom('reset')) {
                 await message.reply(`Deleting REST commands...`);
                 rest.put(Routes.applicationCommands(global.bot.user.id), { body: [] }).then( async () => {
-                    rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: [] }).then( async () => {
+                    rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { boSdy: [] }).then( async () => {
                         await message.channel.send((global.commands.length) + ' slash commands Deleted');
                     });
                 });
