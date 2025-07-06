@@ -10,7 +10,10 @@ const commandFiles = 'guild help ping user world online induct'.split(' ');
 let XMLHttpRequest = require('xhr2');
 let envconfpath = path.join(__dirname, './.env');
 let active = {
-    world: {},
+    world: {
+        biome: "plain",
+        name: "John Doe"
+    },
     date: ""
 };
 require('dotenv').config({ path: envconfpath });
