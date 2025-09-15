@@ -28,7 +28,7 @@ const levDist = (s, t) => {
     return arr[t.length][s.length];
 };  
 
-function searchWorlds(page, info, callback, api_token) {
+function searchPlayers(page, info, callback) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -52,11 +52,11 @@ function searchWorlds(page, info, callback, api_token) {
             if (needsToEnd) {
                 callback([info[0], distance, best]);
             } else {
-                searchWorlds(page + 1, [info[0], distance, best], callback, api_token);
+                searchWorlds(page + 1, [info[0], distance, best], callback);
             }
         }
     };
-    xhttp.open('GET', global.serverUrl + ':5003/v1/worlds?api_token=' + api_token + '&name=' + info[0] + '&page=' + page, true);
+    xhttp.open('GET', global.serverUrl + ':5003/v1/worlds&name=' + info[0] + '&page=' + page, true);
     xhttp.send();
 }
 
@@ -81,74 +81,24 @@ function getDateDistance(t, n) {
 module.exports = {
     local: true,
 	data: new SlashCommandBuilder()
-        .setName('world')
-        .setDescription(`Grab the available info about a world`)
+        .setName('player')
+        .setDescription(`Grab the available info about a player`)
         .addStringOption((option) => option
             .setName('name')
             .setRequired(true)
-            .setDescription('World you wish to know about'))
-        .addStringOption((option) => option
-            .setName('token')
-            .setAutocomplete(false)
-            .setRequired(false)
-            .setDescription('Use your api token (/api ingame) to show hidden worlds')),
-    search(page, info, callback) { searchWorlds(page, info, callback) },
+            .setDescription('Player you wish to know about')),
+        // .addStringOption((option) => option
+        //     .setName('token')
+        //     .setAutocomplete(false)
+        //     .setRequired(false)
+        //     .setDescription('Use your api token (/api ingame)')),
 	async execute(interaction) {
         const profileEmbed = new EmbedBuilder();
         let name = interaction.options.getString('name').replace(/[^[\x00-\x7F]+$/g, "");
         if (name.length == 0) {
-            interaction.reply('World not found, or not specified');
+            interaction.reply('Player not found, or not specified');
             return;
         }
-        let token = interaction.options.getString('token');
-        searchWorlds(1, [name, 100, 0], (info) => {
-            try {
-                let world = info[2];
-                const market = world.activity == "market" ? true : false;
-                const gendate = new Date(world.gen_date);
-                let fields = [{
-                    name: 'Biome',
-                    value: biomes[world.biome][0] + (market ? ' (Market World)' : '')
-                },{ 
-                    name: 'PVP', 
-                    value: world.pvp ? 'Enabled' : 'Disabled',
-                    inline: true
-                },
-                // { 
-                //     name: 'Private', 
-                //     value: raw.private ? 'Yes' : 'No' 
-                // },
-                { 
-                    name: 'Protection', 
-                    value: world.protected ? 'Enabled' : 'Disabled' ,
-                    inline: true
-                },{
-                    name: 'Generated',
-                    value: `${gendate.toUTCString()} (${getDateDistance(gendate, Date.now())} ago)`
-                }];
-                profileEmbed
-                    .setTitle(world.name)
-                    .setThumbnail(biomes[world.biome][1])
-                    .setImage(encodeURI(global.serverUrl + `:5003/v1/map/${world.name}`))
-                    .setDescription(`${Math.round(world.explored * 1000) / 10}% Explored`)
-                    .addFields(...fields)
-                    // .setFooter({
-                    //     text: 
-                    // })
-                    .setColor(market ? '5ee036' : global.color);
-                if (interaction.options.getString('token')) {
-                    profileEmbed.setFooter({
-                        text: "Private World (Accessed with API Token)"
-                    });
-                }
-                interaction.reply({ embeds: [profileEmbed] });
-            } catch(e) {
-                if (interaction.user.id == global.botOwner)
-                    interaction.reply('World not found, or not specified\n-# Debug: ' + e);
-                    //console.log(e);
-                else
-                    interaction.reply('World not found, or not specified');
-            }
-        }, token);
+        interaction.reply('not implemented');
 	},
 };

@@ -1,12 +1,13 @@
 const { Client, Collection, REST, GatewayIntentBits, 
         Partials, Routes, EmbedBuilder, ActivityType, MessageFlags } = require('discord.js');
+const { FSDB } = require('file-system-db');
 const config = require('./config.json');
 const pkg = require('./package.json');
 const colors = require('colors');
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
-const commandFiles = 'guild help ping user world online induct'.split(' ');
+const commandFiles = 'guild help ping user world online induct register player'.split(' ');
 let XMLHttpRequest = require('xhr2');
 let envconfpath = path.join(__dirname, './.env');
 let active = {
@@ -20,6 +21,8 @@ require('dotenv').config({ path: envconfpath });
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
+global.serverUrl = 'http://v2202410239072292297.goodsrv.de';
+global.arthurdb = new FSDB();
 global.bot = new Client({ intents: [
     GatewayIntentBits.Guilds, 
     GatewayIntentBits.GuildMessages, 
@@ -73,7 +76,7 @@ function testForNewWorld() {
             }
         }
     };
-    xhttp.open('GET', 'http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&sort=created', true);
+    xhttp.open('GET', global.serverUrl + ':5003/v1/worlds?api_token=&sort=created', true);
     xhttp.send();
     //http://v2202410239072292297.goodsrv.de:5003/v1/worlds?api_token=&sort=created
     // server = 237835843677585408
@@ -113,7 +116,7 @@ async function announceWorld() {
                 channel.send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
         });
     } catch(e) {
-        console.warn(e);
+        // console.log(e);
     }
     try {
         await channel2.messages.fetch({limit: 5}).then((messages) => {
@@ -134,7 +137,7 @@ async function announceWorld() {
                 channel2.send(`A new zone has been discovered ingame! Head to ${active.world.name} (${biomes[active.world.biome][0]})`);
         });
     } catch(e) {
-        console.warn(e);
+        // console.log(e);
     }
 }
 
@@ -146,6 +149,34 @@ function format(seconds){
     var minutes = Math.floor(seconds % (60 * 60) / 60);
     var seconds = Math.floor(seconds % 60);
     return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+}
+
+// Refresh Player Database
+
+function repeat_players(page, playerList, callback) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        console.log("working");
+        if (this.readyState == 4 && this.status == 200) {
+            let json = xhttp.responseText;
+            let raw = JSON.parse(json);
+            if (raw.length != 0) {
+                console.log("Continue");
+                playerList.concat(raw);
+                repeat_players(page + 1, playerList, callback);
+            } else {
+                callback();
+            }
+        }
+    };
+    xhttp.open('GET', global.serverUrl + ':5001/players?page' + page, true);
+    xhttp.send();
+}
+
+function getPlayers() {
+    repeat_players(1, [], (list) => {
+        global.arthurdb.set(`deepworld.players`, list);
+    });
 }
 
 global.bot.once('ready', async () => {
@@ -233,10 +264,8 @@ global.bot.on('messageCreate', async message => {
                 await message.reply(`Reloading REST commands...`);
                 rest.put(Routes.applicationCommands(global.bot.user.id), { body: global.globals }).then( async (e) => {
                     rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.mainserver), { body: global.locals }).then( async () => {
-                        rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.extraserver), { body: global.locals }).then( async () => {
-                            rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.devserver), { body: global.locals }).then( async () => {
-                                await message.channel.send((global.commands.length) + ' slash commands Updated');
-                            });
+                        rest.put(Routes.applicationGuildCommands(global.bot.user.id, config.bot.devserver), { body: global.locals }).then( async () => {
+                            await message.channel.send((global.commands.length) + ' slash commands Updated');
                         });
                     });
                 });
