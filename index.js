@@ -151,32 +151,75 @@ function format(seconds){
     return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
 }
 
-// Refresh Player Database
-
-function repeat_players(page, playerList, callback) {
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        console.log("working");
-        if (this.readyState == 4 && this.status == 200) {
-            let json = xhttp.responseText;
-            let raw = JSON.parse(json);
-            if (raw.length != 0) {
-                console.log("Continue");
-                playerList.concat(raw);
-                repeat_players(page + 1, playerList, callback);
-            } else {
-                callback();
-            }
+// Refresh Player Names
+async function getPlayers() {
+    try {
+        let repeat = (page, playerList, nameList, callback) => {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let json = xhttp.responseText;
+                    let raw = JSON.parse(json);
+                    if (raw[0]) {
+                        playerList = playerList.concat(raw);
+                        raw.forEach((player) => {
+                            nameList.push(player.name);
+                        })
+                        repeat(page + 1, playerList, nameList, callback);
+                    } else {
+                        callback(playerList, nameList);
+                    }
+                }
+            };
+            xhttp.open('GET', global.serverUrl + ':5001/players?page=' + page, true);
+            xhttp.send();
         }
-    };
-    xhttp.open('GET', global.serverUrl + ':5001/players?page' + page, true);
-    xhttp.send();
+        repeat(1, [], [], (list, names) => {
+            global.arthurdb.set(`deepworld.raw_players`, list);
+            global.arthurdb.set(`deepworld.player_names`, names);
+        })
+    } catch(e) {
+
+    }
 }
 
-function getPlayers() {
-    repeat_players(1, [], (list) => {
-        global.arthurdb.set(`deepworld.players`, list);
-    });
+// Get Player Information
+async function get_advanced_player_info() {
+    try {
+        let nameList = global.arthurdb.get('deepworld.player_names');
+        let tokenList = global.arthurdb.get('deepworld.player_tokens');
+        let repeat = (index, list, callback) => {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    let json = xhttp.responseText;
+                    let raw = JSON.parse(json);
+                    if (raw.name) {
+                        list[raw.name.toLowerCase()] = raw;
+                        if (index < nameList.length) {
+                            repeat(index + 1, list, callback);
+                        } else {
+                            callback(list);
+                        }
+                    } else {
+                        callback(list);
+                        console.warn('Player Info encountered error. ' + index);
+                    }
+                }
+            };
+            if (tokenList[nameList[index]])
+                xhttp.open('GET', global.serverUrl + ':5001/players/' + nameList[index] + `?api_token=` + tokenList[nameList[index]], true);
+            else 
+                xhttp.open('GET', global.serverUrl + ':5001/players/' + nameList[index], true);
+            xhttp.send();
+        }
+        repeat(0, {}, (list) => {
+            global.arthurdb.set(`deepworld.players`, list);
+            resolve();
+        });
+    } catch(e) {
+
+    }
 }
 
 global.bot.once('ready', async () => {
