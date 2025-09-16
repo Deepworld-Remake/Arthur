@@ -1,5 +1,5 @@
 const { Client, Collection, REST, GatewayIntentBits, 
-        Partials, Routes, EmbedBuilder, ActivityType, MessageFlags } = require('discord.js');
+        Partials, Routes, EmbedBuilder, ActivityType, MessageFlags, Events } = require('discord.js');
 const { FSDB } = require('file-system-db');
 const config = require('./config.json');
 const pkg = require('./package.json');
@@ -222,7 +222,7 @@ async function get_advanced_player_info() {
     }
 }
 
-global.bot.once('ready', async () => {
+global.bot.on(Events.ClientReady, async () => {
     console.log('\n\n');
     console.log(colors.bold('     ███  ████  █████ █   █ █   █ ████').yellow);
     console.log(colors.bold('    █   █ █   █   █   █   █ █   █ █   █').yellow);
@@ -235,7 +235,7 @@ global.bot.once('ready', async () => {
     setInterval(testForNewWorld, 30000);
 });
 
-global.bot.on('interactionCreate', async interaction => {
+global.bot.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isCommand()) return;
     if (!global.bot.commands.has(interaction.commandName)) return;
     try {
@@ -245,7 +245,7 @@ global.bot.on('interactionCreate', async interaction => {
     }
 });
 
-global.bot.on('messageCreate', async message => { 
+global.bot.on(Events.MessageCreate, async message => { 
     const txt = message.content;
     if (message.author.id == config.bot.owner) {
         let botname = bot.user.username.toLowerCase();
